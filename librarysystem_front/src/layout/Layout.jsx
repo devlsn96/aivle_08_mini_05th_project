@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import { Outlet } from "react-router-dom";
 
 import Header from "./Header";
-import Sidebar from "./Sidebar";
+import Slidebar from "./Slidebar";
 import Footer from "./Footer";
 
 export default function Layout() {
@@ -15,7 +15,7 @@ export default function Layout() {
 
       {/* 사이드바 + 메인 화면 입니다! */}
       <Box sx={{ display: "flex", flex: 1 }}>
-        <Sidebar />
+        <Slidebar />
 
         {/* 요기가 메인 */}
         <Box
