@@ -1,197 +1,122 @@
-//도서 수정 
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Typography,
-  Paper,
+  TextField,
   Button,
+  Paper,
+  Typography,
   Grid
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
+import bookServices from "../services/bookService";
 
-// ========================================================================
-// 📌 DetailBookPage
-// - 도서 상세 정보를 조회하고 대출 / 반납 기능을 제공하는 페이지
-// - 지금은 Dummy 데이터를 기반으로 동작
-// - 나중에 API를 쉽게 붙일 수 있도록 구조를 API-friendly하게 구성
-// ========================================================================
-
-export default function DetailBookPage() {
+export default function EditBookPage() {
   const navigate = useNavigate();
-  const { book_id } = useParams();
+  const { bookId } = useParams();
 
-  // ========================================================================
-  // 📌 도서 상세 정보 state (API Response 구조 그대로)
-  // GET /books/{bookId} 응답 형태에 맞춤
-  // ========================================================================
-  const [book, setBook] = useState({
-    bookId: book_id,
-    title: "",
-    author: "",
-    summary: "",
-    coverImageUrl: "", // 이미지 url
-    stockCount: 0,        // 전체 재고
-    availableStock: 0,    // 대출 가능 재고
-  });
+  const [book, setBook] = useState(null);
+  const [aiImages, setAiImages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // rentalId는 대출 성공 시 서버에서 받아옴
-  const [rentalId, setRentalId] = useState(null);
-
-  // ========================================================================
-  // 📌 Dummy 데이터 로드 (실제 API 호출 부분)
-  // ========================================================================
+  // 📌 상세정보 불러오기
   useEffect(() => {
-    // 🔵 Dummy Data 로 테스트
-    const dummyDetail = {
-      bookId: book_id,
-      title: "예시 도서 제목",
-      author: "홍길동",
-      summary: "이 책은 도서 상세 페이지 테스트용 더미 요약입니다.",
-      coverImageUrl: "https://via.placeholder.com/200x260?text=Cover",
-      stockCount: 5,
-      availableStock: 3,
+    const loadBook = async () => {
+      const res = await bookServices.fetchBookById(bookId);
+      setBook(res);
     };
+    loadBook();
+  }, [bookId]);
 
-    setBook(dummyDetail);
+  if (!book) return <Typography>Loading...</Typography>;
 
-    // 🟢 실제 API 연결 시
-    /*
-    const res = await getBookById(book_id);
-    setBook(res.data);
-    */
-  }, [book_id]);
+  const buildPrompt = () =>
+    `Create a book cover illustration based on this summary:\n\n${book.summary}`;// 프롬프트 별도 만들기
 
-  // ========================================================================
-  // 📌 대출하기 (POST /rentals)
-  // ========================================================================
-  const handleRent = async () => {
-    // 🔵 dummy test
-    setRentalId(123);          // 가짜 rentalId 생성
-    setBook(prev => ({
-      ...prev,
-      availableStock: prev.availableStock - 1,
-    }));
+  // 📌 AI 이미지 재생성
+  const handleRegenerateImage = async () => {
+    if (!book.summary.trim()) {
+      alert("summary는 필수입니다.");
+      return;
+    }
 
-    // 🟢 실제 API
-    /*
-    const res = await rentBook(book.bookId);
-    setRentalId(res.data.rentalId);
-    setBook(prev => ({
-      ...prev,
-      availableStock: prev.availableStock - 1
-    }));
-    */
+    setLoading(true);
+    try {
+      const prompt = buildPrompt();
+      const result = await bookServices.generateBookImage(prompt);
+
+      let urls = [];
+      if (typeof result === "string") urls = [result];
+      else if (result.imageUrl) urls = [result.imageUrl];
+      else if (Array.isArray(result.data)) urls = result.data.map((img) => img.url);
+
+      setAiImages(urls);
+    } catch (err) {
+      console.error(err);
+      alert("이미지 생성 실패");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ========================================================================
-  // 📌 반납하기 (PATCH /rentals/{rentalId}/return)
-  // ========================================================================
-  const handleReturn = async () => {
-    // 🔵 dummy test
-    setRentalId(null);
-    setBook(prev => ({
-      ...prev,
-      availableStock: prev.availableStock + 1,
-    }));
+  // 📌 수정 API 호출
+  const handleUpdate = async () => {
+    const payload = {
+      title: book.title,
+      author: book.author,
+      publisher: book.publisher,
+      summary: book.summary,
+      coverImageUrl: book.coverImageUrl,
+    };
 
-    // 🟢 실제 API
-    /*
-    await returnRental(rentalId);
-    setRentalId(null);
-    setBook(prev => ({
-      ...prev,
-      availableStock: prev.availableStock + 1
-    }));
-    */
+    await bookServices.updateBook(bookId, payload);
+    alert("수정 완료");
+    navigate(`/book/${bookId}`);
   };
 
   return (
     <Box maxWidth="750px" mx="auto" display="flex" flexDirection="column" gap={3}>
-      <Typography variant="h5">📖 도서 상세 정보</Typography>
+      <Typography variant="h5">📘 도서 수정</Typography>
 
-      {/* 표지 이미지 */}
-      <Paper
-        variant="outlined"
-        sx={{
-          height: 260,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <img
-          src={book.coverImageUrl}
-          style={{ width: "100%", height: "100%", borderRadius: 6 }}
-        />
-      </Paper>
+      <TextField label="책 제목" fullWidth value={book.title} onChange={(e) => setBook({ ...book, title: e.target.value })} />
+      <TextField label="저자" fullWidth value={book.author} onChange={(e) => setBook({ ...book, author: e.target.value })} />
+      <TextField label="출판사" fullWidth value={book.publisher} onChange={(e) => setBook({ ...book, publisher: e.target.value })} />
+      <TextField
+        label="책 소개 (summary)"
+        fullWidth
+        multiline
+        rows={4}
+        value={book.summary}
+        onChange={(e) => setBook({ ...book, summary: e.target.value })}
+      />
 
-      {/* 제목 */}
-      <Paper variant="outlined" sx={{ p: 2 }}>
-        <Typography fontWeight="bold">책 제목</Typography>
-        <Typography>{book.title}</Typography>
-      </Paper>
-
-      {/* 저자 */}
-      <Paper variant="outlined" sx={{ p: 2 }}>
-        <Typography fontWeight="bold">저자</Typography>
-        <Typography>{book.author}</Typography>
-      </Paper>
-
-      {/* 요약 */}
-      <Paper variant="outlined" sx={{ p: 2 }}>
-        <Typography fontWeight="bold">책 요약</Typography>
-        <Typography>{book.summary}</Typography>
-      </Paper>
-
-      {/* 재고 */}
-      <Paper variant="outlined" sx={{ p: 2 }}>
-        <Typography fontWeight="bold">재고 현황</Typography>
-        <Typography>전체 재고: {book.stockCount}</Typography>
-        <Typography>대출 가능: {book.availableStock}</Typography>
-      </Paper>
-
-      {/* 버튼 그룹 */}
-      <Grid container spacing={2}>
-        {/* 수정 */}
-        <Grid item xs={12}>
-          <Button
-            variant="contained"
-            color="secondary"
-            fullWidth
-            onClick={() => navigate(`/book/${book_id}/edit`)}
-          >
-            도서 수정
-          </Button>
+      {/* 이미지 선택 */}
+      {aiImages.length > 0 && (
+        <Grid container spacing={2}>
+          {aiImages.map((img, idx) => (
+            <Grid item xs={3} key={idx}>
+              <Paper
+                onClick={() => setBook({ ...book, coverImageUrl: img })}
+                sx={{
+                  border: book.coverImageUrl === img ? "3px solid #1976d2" : "1px solid #ccc",
+                  cursor: "pointer",
+                  p: 1,
+                }}
+              >
+                <img src={img} width="100%" />
+              </Paper>
+            </Grid>
+          ))}
         </Grid>
+      )}
 
-        {/* 대출 */}
-        <Grid item xs={6}>
-          <Button
-            variant="contained"
-            color="success"
-            fullWidth
-            disabled={book.availableStock === 0 || rentalId !== null}
-            onClick={handleRent}
-          >
-            대출
-          </Button>
-        </Grid>
+      <Button variant="outlined" onClick={handleRegenerateImage}>
+        {loading ? "생성 중..." : "이미지 재생성"}
+      </Button>
 
-        {/* 반납 */}
-        <Grid item xs={6}>
-          <Button
-            variant="contained"
-            color="error"
-            fullWidth
-            disabled={rentalId === null}
-            onClick={handleReturn}
-          >
-            반납
-          </Button>
-        </Grid>
-      </Grid>
+      <Button variant="contained" onClick={handleUpdate}>
+        수정 완료
+      </Button>
 
-      {/* 뒤로가기 */}
       <Button variant="text" onClick={() => navigate(-1)}>
         뒤로가기
       </Button>

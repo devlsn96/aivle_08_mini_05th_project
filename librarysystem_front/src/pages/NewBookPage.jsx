@@ -16,85 +16,61 @@ export default function NewBookPage() {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [publisher, setPublisher] = useState("");
-  const [genre, setGenre] = useState("");
-  const [tag, setTag] = useState("");
-  const [price, setPrice] = useState("");
+  const [summary, setSummary] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState(null);
-
   const [aiImages, setAiImages] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // ============================================================
-  // 📌 AI 프롬프트 생성 (summary 대신 제목 + 장르 사용, 영어 변환)
-  // ============================================================
-  const buildPrompt = () => {
-    const baseTitle = title || "Untitled Book";
-    const baseGenre = genre || "General";
+  // 📌 summary 기반 프롬프트 생성
+  const buildPrompt = () =>
+    `Create a book cover illustration based on the following book summary:\n\n${summary}\n\nMake it visually appealing.`;
 
-    return `A book cover illustration for a ${baseGenre} novel titled "${baseTitle}".
-Use a visually appealing and professional style suitable for a published book.`;
-  };
-
-  // ============================================================
-  // 📌 AI 이미지 생성 API 호출
-  // ============================================================
+  // 📌 AI 이미지 생성
   const handleGenerateAICover = async () => {
-    if (!title && !genre) {
-      alert("제목 또는 장르가 있어야 이미지 생성이 가능합니다.");
+    if (!summary.trim()) {
+      alert("책 소개(summary)는 필수입니다.");
       return;
     }
 
     setLoading(true);
-
     try {
       const prompt = buildPrompt();
-
-      // 백엔드는 문자열만 받기 때문에 prompt만 전달
       const result = await bookServices.generateBookImage(prompt);
 
-      console.log("AI 이미지 API 응답:", result);
-
       let urls = [];
-
-      if (typeof result === "string") {
-        urls = [result];
-      } else if (result.imageUrl) {
-        urls = [result.imageUrl];
-      } else if (result.data && Array.isArray(result.data)) {
-        urls = result.data.map((img) => img.url);
-      }
+      if (typeof result === "string") urls = [result];
+      else if (result.imageUrl) urls = [result.imageUrl];
+      else if (Array.isArray(result.data)) urls = result.data.map((img) => img.url);
 
       if (urls.length === 0) {
-        alert("이미지 생성에 실패했습니다.");
+        alert("이미지 생성 실패");
         return;
       }
 
       setAiImages(urls);
     } catch (err) {
       console.error("AI 이미지 생성 오류:", err);
-      alert("이미지 생성 중 오류 발생");
+      alert("이미지 생성 중 문제가 발생했습니다.");
     } finally {
       setLoading(false);
     }
   };
 
-  // ============================================================
   // 📌 도서 등록 API 호출
-  // ============================================================
   const handleCreateBook = async () => {
+    if (!title || !author || !publisher || !summary || !coverImageUrl) {
+      alert("필수 입력값이 누락되었습니다.");
+      return;
+    }
+
     const payload = {
       title,
-      publisher,
       author,
-      genre,
-      tag,
-      coverImage: coverImageUrl,   // ⭐ 필드명 변경!
-      price: Number(price),        // ⭐ 숫자로 변환 필수
+      publisher,
+      summary,
+      coverImageUrl,
       registrationDate: new Date().toISOString().split("T")[0],
     };
-
-
-    console.log("📌 등록 요청 Body:", payload);
 
     try {
       await bookServices.createBook(payload);
@@ -113,11 +89,16 @@ Use a visually appealing and professional style suitable for a published book.`;
       <TextField label="책 제목" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} />
       <TextField label="저자" fullWidth value={author} onChange={(e) => setAuthor(e.target.value)} />
       <TextField label="출판사" fullWidth value={publisher} onChange={(e) => setPublisher(e.target.value)} />
-      <TextField label="장르" fullWidth value={genre} onChange={(e) => setGenre(e.target.value)} />
-      <TextField label="태그" fullWidth value={tag} onChange={(e) => setTag(e.target.value)} />
-      <TextField label="가격" type="number" fullWidth value={price} onChange={(e) => setPrice(e.target.value)} />
+      <TextField
+        label="책 소개 (summary)"
+        fullWidth
+        multiline
+        rows={4}
+        value={summary}
+        onChange={(e) => setSummary(e.target.value)}
+      />
 
-      {/* AI 이미지 미리보기 */}
+      {/* AI 이미지 후보 */}
       {aiImages.length > 0 && (
         <Grid container spacing={2}>
           {aiImages.map((img, idx) => (
