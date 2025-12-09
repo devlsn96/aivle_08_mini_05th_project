@@ -68,19 +68,12 @@ SearchContext를 활용하여 검색 상태 전역 관리
 
 LoginPage.jsx, SignUpPage.jsx 구성
 
-추후 백엔드 API 연동 예정 (TODO)
 
-📚 4. 공통 UI 레이아웃
-
-Layout.jsx : 페이지 전체 구조 관리
-
-Header, Footer, Slidebar 로 구성된 UI 프레임워크
-
-🔗 5. 서비스 계층 (bookService.js)
+🔗 4. 서비스 계층 (bookService.js)
 
 도서 API 호출을 위한 모듈
 
-axios 또는 fetch 기반 통신 예정
+axios 기반 통신중
 
 
 
