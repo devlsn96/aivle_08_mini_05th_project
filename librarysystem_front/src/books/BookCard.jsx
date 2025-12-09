@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 function BookCard({ book }) {
   const navigate = useNavigate();
-  const { id, title, author, coverUrl, status } = book;
+  const { bookNo, title, author, coverImageUrl, status } = book;
 
   const isRented = status === '대출 중';
 
   return (
     <Card
-      onClick={() => navigate(`/api/books/${id}`)}
+      onClick={() => navigate(`/books/${bookNo}`)}
       sx={{
         width: '200px',
         height: '300px',
@@ -25,9 +25,9 @@ function BookCard({ book }) {
     >
       <CardMedia
         component="img"
-        image={coverUrl}
+        image={coverImageUrl}
         alt={title}
-        sx={{ p: 1.5, pb: 0 }}
+        sx={{ pr: 1.5, pb: 0 }}
       />
 
       <CardContent sx={{ flexGrow: 1, p: 1.5, pb: 0 }}>
