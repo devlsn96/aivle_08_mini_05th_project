@@ -105,7 +105,7 @@ export async function deleteBook(bookId) {
 // Body: { prompt }
 // Res: { imageUrl: "/img/book/1/cover.png" }
 export async function generateBookImage(prompt) {
-  const res = await api.post("/api/cover", { prompt });
+  const res = await api.post("/api/images/generate", { prompt });
   return res.data; // { imageUrl }
 }
 
