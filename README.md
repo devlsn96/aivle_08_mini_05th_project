@@ -180,7 +180,7 @@ api.interceptors.request.use((config) => {
 - createBook(bookData)
 - updateBook(bookId, updateData)
 - deleteBook(bookId)
-- 
+  
 6.3. AI 이미지 생성
 | 함수명                 | 메서드  | 엔드포인트                  | 설명                  |
 | ------------------- | ---- | ---------------------- | ------------------- |
