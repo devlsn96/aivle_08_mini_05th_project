@@ -10,7 +10,7 @@ function BookCard({ book }) {
 
   return (
     <Card
-      onClick={() => navigate(`/books/${bookNo}`)}
+      onClick={() => navigate(`/book/${bookNo}`)}
       sx={{
         width: '200px',
         height: '300px',
