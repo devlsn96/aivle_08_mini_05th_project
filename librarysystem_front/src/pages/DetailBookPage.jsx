@@ -182,7 +182,7 @@ export default function DetailBookPage() {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => navigate(`/book/${bookId}/edit`)}
+          onClick={() => navigate(`/edit`)}
         >
           수정하기
         </Button>
