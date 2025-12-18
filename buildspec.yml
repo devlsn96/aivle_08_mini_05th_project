@@ -5,6 +5,7 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
+      - npm ci
       - rm -rf node_modules
       - cd ./librarysystem_front
       - npm install
