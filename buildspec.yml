@@ -4,24 +4,16 @@ phases:
     runtime-versions:
       nodejs: 20
     commands:
-      - echo "의존성 설치 중..."
-      - npm install
-
-  pre_build:
-    commands:
-      - cd frontend
+      - echo "현재 위치 확인:"
+      - pwd
+      - echo "현재 폴더 파일 목록:"
+      - ls -al          # 파일이 실제로 존재하는지 로그로 보여줍니다.
       - npm install
   build:
     commands:
-      - echo "Vite 빌드 시작..."
       - npm run build
-    finally:
-      - echo This is the finally block execution!
-  post_build:
-    commands:
-      - echo "빌드 완료!"
 artifacts:
   files:
-    - '**/*'      
-  base-directory: 'dist' 
+    - '**/*'
+  base-directory: 'dist'
 
