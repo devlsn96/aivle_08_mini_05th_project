@@ -6,10 +6,10 @@ phases:
       nodejs: 20
       java: corretto17
     commands:
+      - yum update -y
       - cd ./librarysystem_front
       - echo "install global dependencies if needed"
       - npm install -g npm@9
-      - yum update -y
   pre_build:
     commands:
       - echo "install project dependencies"
