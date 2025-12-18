@@ -5,10 +5,10 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - npm ci
-      - rm -rf node_modules
       - cd ./librarysystem_front
-      - npm install
+      - rm -rf node_modules
+      - npm install -g npm@9
+      - npm install --legacy-peer-deps
   pre_build:
     commands:
       - echo "=== Clean previous build artifacts ==="
