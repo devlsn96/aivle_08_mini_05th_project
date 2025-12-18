@@ -23,7 +23,7 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: dist
+  base-directory: librarysystem_front/dist
 
 cache:
   paths: []
