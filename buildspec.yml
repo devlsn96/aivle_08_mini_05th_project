@@ -6,7 +6,7 @@ phases:
       nodejs: 18
     commands:
       - echo "=== Move to project root ==="
-      - cd ./librarysystem_front
+      - cd $CODEBUILD_SRC_DIR
       - echo "=== Install dependencies ==="
       - npm install -g npm@9
       - rm -rf node_modules
@@ -17,8 +17,6 @@ phases:
       - echo "=== Clean previous build artifacts ==="
       - rm -rf dist
       - rm -rf node_modules/.vite
-      - git fetch --all
-      - git reset --hard origin/main
 
   build:
     commands:
