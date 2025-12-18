@@ -1,21 +1,24 @@
 version: 0.2
-
 phases:
   install:
-    runtime-versions:
-      nodejs: 20
     commands:
-      - echo "현재 위치 확인:"
-      - pwd
-      - cd ./librarysystem_front
-      - echo "현재 폴더 파일 목록:"
-      - ls -al          # 파일이 실제로 존재하는지 로그로 보여줍니다.
-      - npm install
+      - echo "=== Installing Dependencies ==="
+      - rm -rf node_modules
+      - npm ci
+  pre_build:
+    commands:
+      - echo "=== Cleaning Previous Artifacts & Vite Cache ==="
+      - rm -rf dist
+      - rm -rf node_modules/.vite
+      - git fetch --all
+      - git reset --hard origin/main
+
   build:
     commands:
+      - echo "=== Running Build ==="
       - npm run build
 artifacts:
   files:
     - '**/*'
-  base-directory: 'dist'
+  base-directory: dist 
 
