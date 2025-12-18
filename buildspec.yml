@@ -8,15 +8,11 @@ phases:
     commands:
       - yum update -y
       - cd ./library_front
-      - echo "Install global dependencies if needed"
-      - npm install -g npm@9
+      - npm install
   pre_build:
     commands:
-      - echo "Install project dependencies"
-      - npm install
       - cd ..
-      - echo "Checking library_back directory..."
-      - if [ ! -d "./library_back" ]; then echo "Directory library_back not found"; exit 1; fi
+      - ./library_back/gradlew clean
       - chmod +rx ./library_back        # 디렉토리 접근 권한
       - chmod +x ./library_back/gradlew # gradlew 실행 권한 부여
       - ls -l ./library_back/gradlew    # 권한 확인
@@ -24,9 +20,8 @@ phases:
     commands:
       - cd ./library_front
       - npm run build
-      - cd ../library_back
-      - echo "Current directory: $(pwd)"
-      - ./gradlew clean
+      - cd ..
+      - cd ./library_back
       - ./gradlew build
       - echo "Build completed."
 
