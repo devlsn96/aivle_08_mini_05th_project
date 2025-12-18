@@ -4,28 +4,16 @@ phases:
   install:
     runtime-versions:
       nodejs: 20
-      java: corretto17
     commands:
-      - apt-get update -y
-      - apt-get install -y wget unzip
-      - chmod +x ./library_back/gradlew
-      - ./library_back/gradlew --version
+      - cd library_front
+      - npm ci
   pre_build:
     commands:
-      - cd ./library_front
       - npm install
-      - cd ..
-      - ./library_back/gradlew clean
   build:
     commands:
-      - cd ./library_front
       - npm run build
-      - cd ..
-      - cd ./library_back
-      - ./gradlew build
-      - echo "Build completed."
-
 artifacts:
+  base-directory: library_front/dist
   files:
-    - library_front/dist/**/*
-    - library_back/build/libs/*.jar
+    - '**/*'
