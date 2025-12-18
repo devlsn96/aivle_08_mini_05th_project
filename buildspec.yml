@@ -6,7 +6,8 @@ phases:
       nodejs: 20
       java: corretto17
     commands:
-      - yum update -y
+      - apt-get update -y
+      - apt-get upgrade -y
       - cd ./library_front
       - npm install
   pre_build:
