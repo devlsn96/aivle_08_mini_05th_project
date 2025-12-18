@@ -1,12 +1,13 @@
 version: 0.2
 phases:
   install:
-    runtime-versions:
-      nodejs: 20
     commands:
       - echo "=== Installing Dependencies ==="
+      - node -v
+      - npm -v
       - rm -rf node_modules
-      - npm ci
+      - npm install --legacy-peer-deps
+
   pre_build:
     commands:
       - echo "=== Cleaning Previous Artifacts & Vite Cache ==="
@@ -22,5 +23,7 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: dist 
+  base-directory: dist   
 
+cache:
+  paths: []  
