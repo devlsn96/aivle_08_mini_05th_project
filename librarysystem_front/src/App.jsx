@@ -9,8 +9,8 @@ import DetailBookPage from "./pages/DetailBookPage";
 import EditBookPage from "./pages/EditBookPage";
 
 // 로그인 & 회원가입
-import LoginPage from "./pages/LoginPage"; //
-import SignupPage from "./pages/SignupPage"; //
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import { SearchProvider } from "./context/SearchContext";
 
@@ -39,5 +39,5 @@ export default function App() {
     <SearchProvider>
       <RouterProvider router={router} />;
     </SearchProvider>
-  )
+  );
 }
