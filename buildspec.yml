@@ -7,7 +7,7 @@ phases:
       java: corretto17
     commands:
       - yum update -y
-      - cd ./librarysystem_front
+      - cd ./library_front
       - echo "install global dependencies if needed"
       - npm install -g npm@9
   pre_build:
@@ -15,22 +15,22 @@ phases:
       - echo "install project dependencies"
       - npm install
       - cd ..
-      - echo "Checking library-backend directory..."
-      - if [ ! -d "./library-backend" ]; then echo "Directory library-backend not found"; exit 1; fi
-      - chmod +rx ./library-backend               # 디렉토리 접근 권한
-      - chmod +x ./library-backend/gradlew        # gradlew 실행 권한 부여
-      - ls -l ./library-backend/gradlew           # 권한 확인
+      - echo "Checking library_back directory..."
+      - if [ ! -d "./library_back" ]; then echo "Directory library-backend not found"; exit 1; fi
+      - chmod +rx ./library_backend # 디렉토리 접근 권한
+      - chmod +x ./library_back/gradlew # gradlew 실행 권한 부여
+      - ls -l ./library_back/gradlew # 권한 확인
   build:
     commands:
-      - cd ./librarysystem_front
+      - cd ./library_front
       - npm run build
-      - cd ../library-backend
+      - cd ../library_back
       - echo "Current directory: $(pwd)"
-      - ./gradlew clean   
-      - ./gradlew build  
+      - ./gradlew clean
+      - ./gradlew build
       - echo "Build completed."
 
 artifacts:
   files:
-    - ../librarysystem_front/dist
-    - ../library-backend/build/libs/*.jar
+    - ../library_front/dist
+    - ../library_back/build/libs/*.jar
