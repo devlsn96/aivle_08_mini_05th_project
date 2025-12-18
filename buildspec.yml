@@ -4,29 +4,30 @@ phases:
   install:
     runtime-versions:
       nodejs: 20
+      java: corretto17
     commands:
       - cd ./librarysystem_front
       - echo "install global dependencies if needed"
       - npm install -g npm@9
-
+      - cd ./library-backend 
+      - ./gradlew clean
   pre_build:
     commands:
       - echo "install project dependencies"
       - rm -rf node_modules
       - npm install
-
   build:
     commands:
       - echo "run React build"
       - npm run build
+      - echo "Building backend..."
+      - cd ./library-backend 
+      - ./gradlew build
       - echo "Build completed."
     finally:
       - echo "Finally block executed."
 
 artifacts:
-  base-directory: ./librarysystem_front/dist
   files:
-    - '**/*'
-
-cache:
-  paths: []
+    - ./librarysystem_front/dist
+    - ./library-backend/build/libs/*.jar
