@@ -9,7 +9,7 @@ phases:
       - cd ./librarysystem_front
       - echo "install global dependencies if needed"
       - npm install -g npm@9
-      - ../library-backendgradlew clean
+      - ../library-backend/gradlew clean
   pre_build:
     commands:
       - echo "install project dependencies"
