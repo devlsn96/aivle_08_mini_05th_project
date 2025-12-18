@@ -9,23 +9,16 @@ phases:
       - cd ./librarysystem_front
       - echo "install global dependencies if needed"
       - npm install -g npm@9
-      - ./gradlew clean
+      - ../library-backendgradlew clean
   pre_build:
     commands:
       - echo "install project dependencies"
-      - rm -rf node_modules
+      - cd ../librarysystem_front
       - npm install
-      - if [ ! -d "./library-backend" ]; then echo "Directory library-backend not found"; exit 1; fi
-      - chmod +rx ./library-backend
-      - ls -ld ./library-backend
   build:
     commands:
-      - echo "run React build"
       - npm run build
-      - echo "Entering library-backend directory..."
-      - cd ./library-backend
-      - echo "Building backend..."
-      - cd ./library-backend 
+      - cd ../library-backend
       - ./gradlew build
       - echo "Build completed."
     finally:
@@ -33,5 +26,5 @@ phases:
 
 artifacts:
   files:
-    - ./librarysystem_front/dist
-    - ./library-backend/build/libs/*.jar
+    - ../librarysystem_front/dist
+    - ../library-backend/build/libs/*.jar
