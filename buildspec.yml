@@ -26,10 +26,9 @@ phases:
       - npm run build
       - cd ../library-backend
       - echo "Current directory: $(pwd)"
-      - ./gradlew clean build  
+      - ./gradlew clean   
+      - ./gradlew build  
       - echo "Build completed."
-    finally:
-      - echo "Finally block executed."
 
 artifacts:
   files:
