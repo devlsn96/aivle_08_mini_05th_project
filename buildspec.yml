@@ -5,7 +5,7 @@ phases:
     runtime-versions:
       nodejs: 20
     commands:
-      - cd library_front
+      - cd librarysystem_front
       - npm ci
   pre_build:
     commands:
@@ -14,6 +14,6 @@ phases:
     commands:
       - npm run build
 artifacts:
-  base-directory: library_front/dist
+  base-directory: librarysystem_front/dist
   files:
     - '**/*'
