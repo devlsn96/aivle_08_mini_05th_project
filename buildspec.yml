@@ -6,24 +6,27 @@ phases:
       nodejs: 18
     commands:
       - cd ./librarysystem_front
-      - rm -rf node_modules
+      - echo "install global dependencies if needed"
       - npm install -g npm@9
-      - npm install --legacy-peer-deps
+
   pre_build:
     commands:
-      - echo "=== Clean previous build artifacts ==="
-      - rm -rf dist
-      - rm -rf node_modules/.vite
+      - echo "install project dependencies"
+      - rm -rf node_modules
+      - npm install
 
   build:
     commands:
-      - echo "=== Run build ==="
+      - echo "run React build"
       - npm run build
+      - echo "Build completed."
+    finally:
+      - echo "Finally block executed."
 
 artifacts:
+  base-directory: ./librarysystem_front/dist
   files:
     - '**/*'
-  base-directory: librarysystem_front/dist
 
 cache:
   paths: []
