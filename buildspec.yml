@@ -5,13 +5,9 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "=== Move to project root ==="
-      - cd $CODEBUILD_SRC_DIR
-      - echo "=== Install dependencies ==="
-      - npm install -g npm@9
       - rm -rf node_modules
-      - npm install --legacy-peer-deps
-
+      - cd ./librarysystem_front
+      - npm install
   pre_build:
     commands:
       - echo "=== Clean previous build artifacts ==="
