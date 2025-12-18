@@ -1,0 +1,26 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo "의존성 설치 중..."
+      - npm install
+
+  pre_build:
+    commands:
+      - npm install
+  build:
+    commands:
+      - echo "Vite 빌드 시작..."
+      - npm run build
+    finally:
+      - echo This is the finally block execution!
+  post_build:
+    commands:
+      - echo "빌드 완료!"
+artifacts:
+  files:
+    - '**/*'      
+  base-directory: 'dist' 
+
