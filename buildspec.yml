@@ -1,19 +1,37 @@
 version: 0.2
+
 phases:
   install:
     runtime-versions:
       nodejs: 20
     commands:
-      - echo "현재 위치 확인:"
+      - echo "1. 현재 디렉토리 경로 확인:"
       - pwd
-      - echo "현재 폴더 파일 목록:"
-      - ls -al          # 파일이 실제로 존재하는지 로그로 보여줍니다.
-      - npm install
+      - echo "2. 현재 위치의 파일 목록 확인:"
+      - ls -R        
+      - echo "3. package.json 위치 찾는 중..."
+      - find . -name "package.json"
+  
+  pre_build:
+    commands:
+      - |
+        # package.json이 있는 위치로 자동 이동하는 로직
+        PACKAGE_PATH=$(find . -name "package.json" -not -path "*/node_modules/*" | head -n 1)
+        if [ -n "$PACKAGE_PATH" ]; then
+          cd $(dirname "$PACKAGE_PATH")
+          echo "프로젝트 위치로 이동했습니다: $(pwd)"
+        else
+          echo "오류: package.json 파일을 어디에서도 찾을 수 없습니다!"
+          exit 1
+        fi
+
   build:
     commands:
+      - echo "4. 라이브러리 설치 및 빌드 시작"
+      - npm install
       - npm run build
+
 artifacts:
   files:
     - '**/*'
-  base-directory: 'dist'
-
+  base-directory: 'dist' # Vite 기준
