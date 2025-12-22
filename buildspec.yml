@@ -11,7 +11,6 @@ phases:
   build:
     commands:
       - echo Building the Docker image...
-      - cd librarysystem_front
       - docker build -t $REPOSITORY_URI:latest librarysystem_front
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
       - echo Pushing the Docker image...
